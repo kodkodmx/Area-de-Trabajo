@@ -29,7 +29,7 @@ class HashtableOpen8to16Test {
     @ParameterizedTest
     @MethodSource("simpleFillCases")
     void testSimpleFilling(String testCaseName, int[] elements, String expectedKeys) {
-        HashtableOpen8to16 hashtable = HashtableOpen8to16.getInstance();
+        HashtableOpen8to16 hashtable =  at com.epam.rd.autocode.hashtableopen816.HashtableOpen8to16Test.testSimpleFilling(HashtableOpen8to16Test.java:35)HashtableOpen8to16.getInstance();
 
         for (int element : elements) {
             hashtable.insert(element, element);
