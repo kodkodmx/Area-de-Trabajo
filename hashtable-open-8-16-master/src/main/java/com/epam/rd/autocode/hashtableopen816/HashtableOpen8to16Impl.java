@@ -1,68 +1,67 @@
 package com.epam.rd.autocode.hashtableopen816;
 
 public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
-
     private static final int INITIAL_CAPACITY = 8;
     private static final int MAX_CAPACITY = 16;
-    private static final int MIN_CAPACITY = 2;
+    private static final double LOAD_FACTOR_THRESHOLD = 0.75;
+    
     private Entry[] table;
     private int size;
-    private int capacity;
 
     public HashtableOpen8to16Impl() {
-        this.capacity = INITIAL_CAPACITY;
-        this.table = new Entry[capacity];
-        this.size = 0;
-    }
-
-    private class Entry {
-        int key;
-        Object value;
-        boolean isDeleted;
-
-        Entry(int key, Object value) {
-            this.key = key;
-            this.value = value;
-            this.isDeleted = false;
-        }
+        table = new Entry[INITIAL_CAPACITY];
+        size = 0;
     }
 
     @Override
     public void insert(int key, Object value) {
-        if (size >= MAX_CAPACITY) {
-            throw new IllegalStateException("Maximum capacity reached");
+        // Verificar si se necesita redimensionar antes de insertar
+        if (size >= table.length * LOAD_FACTOR_THRESHOLD) {
+            if (table.length == MAX_CAPACITY) {
+                throw new IllegalStateException("Cannot insert; maximum capacity reached.");
+            }
+            resize(table.length * 2);
         }
 
-        int index = findIndex(key, true);
-        if (table[index] != null && table[index].key == key && !table[index].isDeleted) {
-            table[index].value = value;
-        } else {
-            table[index] = new Entry(key, value);
-            size++;
-            if (size >= capacity / 2 && capacity < MAX_CAPACITY) {
-                resize(Math.min(capacity * 2, MAX_CAPACITY));
-            }
+        // Inserción o actualización de elementos
+        int index = hash(key);
+        while (table[index] != null && table[index].isActive && table[index].key != key) {
+            index = (index + 1) % table.length;
         }
+
+        if (table[index] == null || !table[index].isActive) {
+            size++;
+        }
+        table[index] = new Entry(key, value);
     }
 
     @Override
     public Object search(int key) {
-        int index = findIndex(key, false);
-        if (table[index] != null && table[index].key == key && !table[index].isDeleted) {
-            return table[index].value;
+        int index = hash(key);
+        while (table[index] != null) {
+            if (table[index].isActive && table[index].key == key) {
+                return table[index].value;
+            }
+            index = (index + 1) % table.length;
         }
         return null;
     }
 
     @Override
     public void remove(int key) {
-        int index = findIndex(key, false);
-        if (table[index] != null && table[index].key == key && !table[index].isDeleted) {
-            table[index].isDeleted = true;
-            size--;
-            if (size > 0 && size <= capacity / 4 && capacity > MIN_CAPACITY) {
-                resize(Math.max(capacity / 2, MIN_CAPACITY));
+        int index = hash(key);
+        while (table[index] != null) {
+            if (table[index].isActive && table[index].key == key) {
+                table[index].isActive = false;
+                size--;
+                
+                // Reducción de capacidad si es necesario
+                if (size > 0 && size <= table.length / 4 && table.length > INITIAL_CAPACITY) {
+                    resize(table.length / 2);
+                }
+                return;
             }
+            index = (index + 1) % table.length;
         }
     }
 
@@ -74,49 +73,45 @@ public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
     @Override
     public int[] keys() {
         int[] keys = new int[size];
-        int idx = 0;
+        int i = 0;
         for (Entry entry : table) {
-            if (entry != null && !entry.isDeleted) {
-                keys[idx++] = entry.key;
+            if (entry != null && entry.isActive) {
+                keys[i++] = entry.key;
             }
         }
         return keys;
     }
 
     private int hash(int key) {
-        return Integer.hashCode(key);
-    }
-
-    private int findIndex(int key, boolean forInsert) {
-        int index = hash(key) % capacity;
-        int startIndex = index;
-
-        while (table[index] != null && (table[index].key != key || table[index].isDeleted)) {
-            index = (index + 1) % capacity;
-            if (index == startIndex) {
-                throw new IllegalStateException("Hashtable full");
-            }
-        }
-
-        return index;
+        return Math.abs(key % table.length);
     }
 
     private void resize(int newCapacity) {
+        if (newCapacity > MAX_CAPACITY) {
+            throw new IllegalStateException("Cannot insert; maximum capacity reached.");
+        }
+
         Entry[] oldTable = table;
         table = new Entry[newCapacity];
-        capacity = newCapacity;
         size = 0;
 
         for (Entry entry : oldTable) {
-            if (entry != null && !entry.isDeleted) {
-                int index = findIndex(entry.key, true);
-                table[index] = entry;
-                size++;
+            if (entry != null && entry.isActive) {
+                insert(entry.key, entry.value);  // Reinsertar elementos activos
             }
         }
     }
 
-    public static HashtableOpen8to16 getInstance() {
-        return new HashtableOpen8to16Impl();
+    // Clase interna para representar una entrada en la tabla hash
+    private static class Entry {
+        int key;
+        Object value;
+        boolean isActive;
+
+        Entry(int key, Object value) {
+            this.key = key;
+            this.value = value;
+            this.isActive = true;
+        }
     }
 }

@@ -4,47 +4,94 @@ public class Main {
     public static void main(String[] args) {
         HashtableOpen8to16 hashtable = HashtableOpen8to16.getInstance();
 
-        // Pruebas de inserción
+        // Prueba de inserción básica
+        hashtable.insert(1, "Value 1");
+        hashtable.insert(2, "Value 2");
+        hashtable.insert(3, "Value 3");
+        System.out.println("Prueba básica de inserción:");
+        System.out.println("Size: " + hashtable.size()); // Debe ser 3
+        printKeysAndValues(hashtable);
+
+        // Prueba de actualización de valores existentes
+        hashtable.insert(1, "Updated Value 1");
+        System.out.println("\nPrueba de actualización de valores:");
+        System.out.println("Valor de la clave 1: " + hashtable.search(1)); // Debe ser "Updated Value 1"
+        printKeysAndValues(hashtable);
+
+        // Prueba de búsqueda de una clave inexistente
+        System.out.println("\nPrueba de búsqueda de clave inexistente:");
+        System.out.println("Valor de la clave 99: " + hashtable.search(99)); // Debe ser null
+
+        // Prueba de eliminación de una clave existente
+        hashtable.remove(2);
+        System.out.println("\nPrueba de eliminación de clave existente:");
+        System.out.println("Size: " + hashtable.size()); // Debe ser 2
+        printKeysAndValues(hashtable);
+
+        // Prueba de eliminación de una clave inexistente
+        hashtable.remove(99);
+        System.out.println("\nPrueba de eliminación de clave inexistente:");
+        System.out.println("Size: " + hashtable.size()); // Debe seguir siendo 2
+        printKeysAndValues(hashtable);
+
+        // Prueba de capacidad inicial y aumento al insertar más elementos
+        System.out.println("\nPrueba de aumento de capacidad:");
+        for (int i = 4; i <= 9; i++) {
+            hashtable.insert(i, "Value " + i);
+        }
+        System.out.println("Size después de insertar más elementos: " + hashtable.size()); // Debe ser 8
+        printKeysAndValues(hashtable);
+
+        // Prueba de eliminación y reducción de capacidad
+        System.out.println("\nPrueba de reducción de capacidad:");
+        hashtable.remove(9);
+        hashtable.remove(8);
+        System.out.println("Size después de eliminar elementos: " + hashtable.size()); // Debe ser 6
+        printKeysAndValues(hashtable);
+
+        // Prueba de manejo de colisiones
+        System.out.println("\nPrueba de manejo de colisiones:");
+        hashtable.insert(18, "Collision 1"); // 18 colisiona con 10
+        hashtable.insert(26, "Collision 2"); // 26 colisiona con 18
+        System.out.println("Size después de manejar colisiones: " + hashtable.size()); // Debe ser 8
+        printKeysAndValues(hashtable);
+
+        // Prueba de inserción de más de 16 elementos
+        System.out.println("\nPrueba de inserción de más de 16 elementos (debe lanzar una excepción):");
         try {
-            hashtable.insert(10, "Value10");
-            hashtable.insert(18, "Value18");
-            hashtable.insert(34, "Value34");
-            
-            // Imprimir valores antes de eliminar
-            System.out.println("Valor para la llave 10: " + hashtable.search(10));
-            System.out.println("Valor para la llave 18: " + hashtable.search(18));
-            System.out.println("Valor para la llave 34: " + hashtable.search(34));
-            
-            // Eliminar elementos
-            hashtable.remove(18);
-            System.out.println("Después de remover la llave 18:");
-            System.out.println("Valor para la llave 10: " + hashtable.search(10));
-            System.out.println("Valor para la llave 18: " + hashtable.search(18));
-            System.out.println("Valor para la llave 34: " + hashtable.search(34));
-            
-            hashtable.remove(10);
-            System.out.println("Después de remover la llave 10:");
-            System.out.println("Valor para la llave 10: " + hashtable.search(10));
-            System.out.println("Valor para la llave 18: " + hashtable.search(18));
-            System.out.println("Valor para la llave 34: " + hashtable.search(34));
+            hashtable.insert(11, "Value 11");
+            hashtable.insert(12, "Value 12");
+            hashtable.insert(13, "Value 13");
+            hashtable.insert(14, "Value 14");
+            hashtable.insert(15, "Value 15");
+            hashtable.insert(16, "Value 16");
+            hashtable.insert(17, "Value 17");
+        } catch (IllegalStateException e) {
+            System.out.println("Excepción capturada correctamente: " + e.getMessage());
+        }
+        printKeysAndValues(hashtable);
 
-            // Pruebas de loop infinito
-            System.out.println("Iniciando pruebas de capacidad máxima...");
+        // Prueba de inserción de valores extremos y límites (con capacidad suficiente)
+        System.out.println("\nPrueba de inserción de valores extremos y límites:");
+        try {
+            hashtable.remove(17);
+            hashtable.remove(16);
+            hashtable.remove(15);
+            hashtable.insert(Integer.MIN_VALUE, "Min Value");
+            hashtable.insert(Integer.MAX_VALUE, "Max Value");
+            System.out.println("Size después de insertar valores extremos: " + hashtable.size());
+            System.out.println("Valor de la clave Integer.MIN_VALUE: " + hashtable.search(Integer.MIN_VALUE)); // Debe ser "Min Value"
+            System.out.println("Valor de la clave Integer.MAX_VALUE: " + hashtable.search(Integer.MAX_VALUE)); // Debe ser "Max Value"
+        } catch (IllegalStateException e) {
+            System.out.println("Excepción capturada: " + e.getMessage());
+        }
+        printKeysAndValues(hashtable);
+    }
 
-            // Llena la tabla hasta el máximo (16)
-            for (int i = 0; i < 16; i++) {
-                hashtable.insert(i, "Value" + i);
-            }
-
-            // Intentar insertar un elemento adicional para causar la excepción
-            try {
-                hashtable.insert(17, "Value17");
-            } catch (IllegalStateException e) {
-                System.out.println("Excepción capturada: " + e.getMessage());
-            }
-            
-        } catch (Exception e) {
-            System.out.println("Excepción en main: " + e.getMessage());
+    private static void printKeysAndValues(HashtableOpen8to16 hashtable) {
+        int[] keys = hashtable.keys();
+        for (int key : keys) {
+            System.out.println("Clave: " + key + ", Valor: " + hashtable.search(key));
         }
     }
 }
