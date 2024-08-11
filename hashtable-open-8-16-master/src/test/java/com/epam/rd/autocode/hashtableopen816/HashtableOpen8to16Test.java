@@ -155,6 +155,18 @@ class HashtableOpen8to16Test {
     }
 
 
+    @Test
+    public void testOverflow(){
+        HashtableOpen8to16 hashtable = HashtableOpen8to16.getInstance();
+
+        for (int i = 0; i < 32; i+=2) {
+            hashtable.insert(i, i);
+        }
+
+        assertThrows(IllegalStateException.class, () -> hashtable.insert(42, 42));
+
+        hashtable.insert(16, 32);
+    }
 
 
 
