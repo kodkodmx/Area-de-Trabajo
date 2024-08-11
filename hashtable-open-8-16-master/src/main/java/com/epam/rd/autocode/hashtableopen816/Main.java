@@ -5,73 +5,109 @@ public class Main {
         HashtableOpen8to16 hashtable = HashtableOpen8to16.getInstance();
 
         // Prueba de inserción básica
+        testInsertion(hashtable);
+
+        // Prueba de actualización de valores existentes
+        testUpdateValues(hashtable);
+
+        // Prueba de búsqueda de una clave inexistente
+        testSearchNonExistentKey(hashtable);
+
+        // Prueba de eliminación de una clave existente
+        testRemoveExistingKey(hashtable);
+
+        // Prueba de eliminación de una clave inexistente
+        testRemoveNonExistentKey(hashtable);
+
+        // Prueba de capacidad inicial y aumento al insertar más elementos
+        testCapacityIncrease(hashtable);
+
+        // Prueba de eliminación y reducción de capacidad
+        testCapacityDecrease(hashtable);
+
+        // Prueba de manejo de colisiones
+        testCollisionHandling(hashtable);
+
+        // Prueba de inserción de más de 16 elementos
+        testInsertMoreThanMaxCapacity(hashtable);
+
+        // Prueba de inserción de valores extremos y límites (con capacidad suficiente)
+        testExtremeValuesInsertion(hashtable);
+    }
+
+    private static void testInsertion(HashtableOpen8to16 hashtable) {
         hashtable.insert(1, "Value 1");
         hashtable.insert(2, "Value 2");
         hashtable.insert(3, "Value 3");
         System.out.println("Prueba básica de inserción:");
         System.out.println("Size: " + hashtable.size()); // Debe ser 3
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de actualización de valores existentes
+    private static void testUpdateValues(HashtableOpen8to16 hashtable) {
         hashtable.insert(1, "Updated Value 1");
         System.out.println("\nPrueba de actualización de valores:");
         System.out.println("Valor de la clave 1: " + hashtable.search(1)); // Debe ser "Updated Value 1"
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de búsqueda de una clave inexistente
+    private static void testSearchNonExistentKey(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de búsqueda de clave inexistente:");
         System.out.println("Valor de la clave 99: " + hashtable.search(99)); // Debe ser null
+    }
 
-        // Prueba de eliminación de una clave existente
+    private static void testRemoveExistingKey(HashtableOpen8to16 hashtable) {
         hashtable.remove(2);
         System.out.println("\nPrueba de eliminación de clave existente:");
         System.out.println("Size: " + hashtable.size()); // Debe ser 2
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de eliminación de una clave inexistente
+    private static void testRemoveNonExistentKey(HashtableOpen8to16 hashtable) {
         hashtable.remove(99);
         System.out.println("\nPrueba de eliminación de clave inexistente:");
         System.out.println("Size: " + hashtable.size()); // Debe seguir siendo 2
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de capacidad inicial y aumento al insertar más elementos
+    private static void testCapacityIncrease(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de aumento de capacidad:");
         for (int i = 4; i <= 9; i++) {
             hashtable.insert(i, "Value " + i);
         }
         System.out.println("Size después de insertar más elementos: " + hashtable.size()); // Debe ser 8
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de eliminación y reducción de capacidad
+    private static void testCapacityDecrease(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de reducción de capacidad:");
         hashtable.remove(9);
         hashtable.remove(8);
         System.out.println("Size después de eliminar elementos: " + hashtable.size()); // Debe ser 6
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de manejo de colisiones
+    private static void testCollisionHandling(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de manejo de colisiones:");
         hashtable.insert(18, "Collision 1"); // 18 colisiona con 10
         hashtable.insert(26, "Collision 2"); // 26 colisiona con 18
         System.out.println("Size después de manejar colisiones: " + hashtable.size()); // Debe ser 8
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de inserción de más de 16 elementos
+    private static void testInsertMoreThanMaxCapacity(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de inserción de más de 16 elementos (debe lanzar una excepción):");
         try {
-            hashtable.insert(11, "Value 11");
-            hashtable.insert(12, "Value 12");
-            hashtable.insert(13, "Value 13");
-            hashtable.insert(14, "Value 14");
-            hashtable.insert(15, "Value 15");
-            hashtable.insert(16, "Value 16");
-            hashtable.insert(17, "Value 17");
+            for (int i = 11; i <= 17; i++) {
+                hashtable.insert(i, "Value " + i);
+            }
         } catch (IllegalStateException e) {
             System.out.println("Excepción capturada correctamente: " + e.getMessage());
         }
         printKeysAndValues(hashtable);
+    }
 
-        // Prueba de inserción de valores extremos y límites (con capacidad suficiente)
+    private static void testExtremeValuesInsertion(HashtableOpen8to16 hashtable) {
         System.out.println("\nPrueba de inserción de valores extremos y límites:");
         try {
             hashtable.remove(17);

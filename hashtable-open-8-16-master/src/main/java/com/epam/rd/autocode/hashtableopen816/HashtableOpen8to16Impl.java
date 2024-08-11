@@ -4,6 +4,7 @@ public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
     private static final int INITIAL_CAPACITY = 8;
     private static final int MAX_CAPACITY = 16;
     private static final double LOAD_FACTOR_THRESHOLD = 0.75;
+    private static final int MIN_CAPACITY = 2;
     
     private Entry[] table;
     private int size;
@@ -15,7 +16,6 @@ public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
 
     @Override
     public void insert(int key, Object value) {
-        // Verificar si se necesita redimensionar antes de insertar
         if (size >= table.length * LOAD_FACTOR_THRESHOLD) {
             if (table.length == MAX_CAPACITY) {
                 throw new IllegalStateException("Cannot insert; maximum capacity reached.");
@@ -23,7 +23,6 @@ public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
             resize(table.length * 2);
         }
 
-        // Inserción o actualización de elementos
         int index = hash(key);
         while (table[index] != null && table[index].isActive && table[index].key != key) {
             index = (index + 1) % table.length;
@@ -54,10 +53,10 @@ public class HashtableOpen8to16Impl implements HashtableOpen8to16 {
             if (table[index].isActive && table[index].key == key) {
                 table[index].isActive = false;
                 size--;
-                
                 // Reducción de capacidad si es necesario
-                if (size > 0 && size <= table.length / 4 && table.length > INITIAL_CAPACITY) {
-                    resize(table.length / 2);
+                if (size > 0 && size <= table.length / 4 && table.length > MIN_CAPACITY) {
+                    int newCapacity = Math.max(MIN_CAPACITY, table.length / 2);
+                    resize(newCapacity);
                 }
                 return;
             }
