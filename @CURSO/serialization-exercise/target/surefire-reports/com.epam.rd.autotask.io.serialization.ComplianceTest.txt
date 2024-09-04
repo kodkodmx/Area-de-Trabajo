@@ -1,9 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.epam.rd.autotask.io.serialization.ComplianceTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.008 s <<< FAILURE! - in com.epam.rd.autotask.io.serialization.ComplianceTest
-testCompliance  Time elapsed: 0.008 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: Expected java.lang.NoSuchMethodException to be thrown, but nothing was thrown.
-	at com.epam.rd.autotask.io.serialization.ComplianceTest.testOrderItemsIsReadonly(ComplianceTest.java:43)
-	at com.epam.rd.autotask.io.serialization.ComplianceTest.testCompliance(ComplianceTest.java:32)
-

@@ -1,9 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.epam.rd.autotask.io.serialization.OrderSerializationTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.017 s <<< FAILURE! - in com.epam.rd.autotask.io.serialization.OrderSerializationTest
-testSerializeOrder  Time elapsed: 0.016 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: The 'total' field must not be serialized ==> expected: <null> but was: <5.0>
-	at com.epam.rd.autotask.io.serialization.OrderSerializationTest.assertActualTotalEquals(OrderSerializationTest.java:85)
-	at com.epam.rd.autotask.io.serialization.OrderSerializationTest.testSerializeOrder(OrderSerializationTest.java:66)
-
