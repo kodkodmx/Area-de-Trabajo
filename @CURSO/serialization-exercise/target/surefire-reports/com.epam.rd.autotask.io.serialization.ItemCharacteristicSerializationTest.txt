@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.081 s <<< FAILURE! - in com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest
+testSerializeItemCharacteristic{ItemCharacteristic}[1]  Time elapsed: 0.046 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: You can write only serializable classes, 
+	at com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest.testSerializeItemCharacteristic(ItemCharacteristicSerializationTest.java:38)
+Caused by: java.io.InvalidClassException: com.epam.rd.autotask.io.serialization.DoubleItemCharacteristic; no valid constructor
+	at com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest.testSerializeItemCharacteristic(ItemCharacteristicSerializationTest.java:31)
+
+testSerializeItemCharacteristic{ItemCharacteristic}[2]  Time elapsed: 0.004 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: You can write only serializable classes, 
+	at com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest.testSerializeItemCharacteristic(ItemCharacteristicSerializationTest.java:38)
+Caused by: java.io.InvalidClassException: com.epam.rd.autotask.io.serialization.IntItemCharacteristic; no valid constructor
+	at com.epam.rd.autotask.io.serialization.ItemCharacteristicSerializationTest.testSerializeItemCharacteristic(ItemCharacteristicSerializationTest.java:31)
+
