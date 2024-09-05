@@ -1,68 +1,75 @@
 package com.epam.rd.autotask.io.serialization;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Objects;
 
 public class Order implements Serializable {
+    private static final long serialVersionUID = 1L; // Ensure consistent serialization
     private Long id;
-    private BigDecimal total;
+    private transient BigDecimal total; // Transient field to avoid serialization
     private Map<Item, Integer> items;
 
     public Order(Long id, Map<Item, Integer> items) {
         this.id = id;
         this.items = items;
-        this.total = calculateTotal();
-    }
-
-    private BigDecimal calculateTotal() {
-        if (items == null || items.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        BigDecimal sum = BigDecimal.ZERO;
-        for (Map.Entry<Item, Integer> entry : items.entrySet()) {
-            sum = sum.add(entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue())));
-        }
-        return sum;
+        calculateTotal(); // Calculate total at the time of order creation
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public BigDecimal getTotal() {
-        if (total == null) {
-            total = calculateTotal();
-        }
-        return total;
-    }
-
     public Map<Item, Integer> getItems() {
         return items;
     }
 
-    public void setItems(Map<Item, Integer> items) {
-        this.items = items;
-        this.total = calculateTotal();
+    public BigDecimal getTotal() {
+        if (total == null) {
+            calculateTotal(); // Recalculate total if needed
+        }
+        return total;
+    }
+
+    private void calculateTotal() {
+        if (items != null && !items.isEmpty()) {
+            total = items.entrySet().stream()
+                    .map(entry -> entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        } else {
+            total = BigDecimal.ZERO; // Set total to zero if no items
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        // Do not write `total` to the stream
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        // Recalculate `total` after deserialization
+        calculateTotal();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Order order = (Order) obj;
-        return Objects.equals(id, order.id) &&
-                Objects.equals(total, order.total) &&
-                Objects.equals(items, order.items);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        if (id != null ? !id.equals(order.id) : order.id != null) return false;
+        return items != null ? items.equals(order.items) : order.items == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, total, items);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (items != null ? items.hashCode() : 0);
+        return result;
     }
 }
